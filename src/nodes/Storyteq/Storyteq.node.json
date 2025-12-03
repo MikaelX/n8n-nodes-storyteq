@@ -1,0 +1,17 @@
+{
+	"node": "n8n-nodes-storyteq.storyteq",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Marketing"],
+	"resources": {
+		"primaryDocumentation": [
+			{
+				"url": "https://api.storyteq.com"
+			},
+			{
+				"url": "https://github.com/MikaelX/n8n-nodes-storyteq"
+			}
+		]
+	}
+}
+

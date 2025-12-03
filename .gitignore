@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.turbo/
+*.log
+.DS_Store
+*.tsbuildinfo
+
+# OpenAPI specification (may contain sensitive URLs/examples)
+openapi.json
+cmp-v2-34_openapi.yaml
+storyteq-api_v4_openapi.yaml
+
+# Cursor IDE internal files
+.cursor/
+
