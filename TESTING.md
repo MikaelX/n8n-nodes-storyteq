@@ -119,10 +119,10 @@ pnpm add /path/to/n8n-nodes-storyteq
 5. Execute the node
 6. Should return extended asset metadata
 
-### Test Download Asset
+### Test Download Asset URL
 
 1. Add Storyteq node
-2. Select **Download Asset** operation
+2. Select **Download Asset URL** operation
 3. Enter an **Asset ID**
 4. Select **Download Type**: Link
 5. Select your Storyteq API credential

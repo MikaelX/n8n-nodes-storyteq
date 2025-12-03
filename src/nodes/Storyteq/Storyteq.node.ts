@@ -36,10 +36,10 @@ export class Storyteq implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Download Asset',
+						name: 'Download Asset URL',
 						value: 'downloadCmpAsset',
 						description: 'Get signed download URL for asset derivative',
-						action: 'Download asset',
+						action: 'Download asset URL',
 					},
 					{
 						name: 'Download Asset Preview',
