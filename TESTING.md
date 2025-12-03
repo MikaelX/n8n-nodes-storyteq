@@ -61,7 +61,7 @@ pnpm add /path/to/n8n-nodes-storyteq
 4. Search for **"Storyteq"**
 5. You should see the Storyteq node in the results
 6. Add the node and verify:
-   - Operations dropdown shows: List Templates, Get Template, Create Media, List Media, Get Media
+   - Operations dropdown shows all 14 operations
    - Credential dropdown shows: Storyteq API
 
 ## Setting Up Credentials
@@ -70,36 +70,112 @@ pnpm add /path/to/n8n-nodes-storyteq
 2. Click **Add Credential**
 3. Search for **"Storyteq API"**
 4. Fill in:
-   - **Bearer Token**: Your Storyteq API Bearer token
-   - **Region**: Select your region (europe-west1 or us-east4)
-5. Click **Save**
+   - **CMP Tenant URL**: Your tenant URL (e.g., `https://your-tenant.storyteq.com`)
+   - **Client ID**: Your OAuth 2.0 client ID
+   - **Username**: Your Storyteq username
+   - **Password**: Your Storyteq password
+   - **Grant Type**: Password (or Refresh Token if you have a refresh token)
+5. Click **Save** - credentials are automatically tested
 6. Use it when configuring the Storyteq node
 
 ## Testing Operations
 
-### Test List Templates
+### Test List User Domains
+
 1. Add Storyteq node
-2. Select **List Templates** operation
+2. Select **List User Domains** operation
 3. Select your Storyteq API credential
 4. Execute the node
-5. Should return a list of templates
+5. Should return a list of domains with IDs and titles
 
-### Test Get Template
-1. Add Storyteq node
-2. Select **Get Template** operation
-3. Enter a Template ID
-4. Select your Storyteq API credential
-5. Execute the node
-6. Should return template details with parameters
+### Test List Assets
 
-### Test Create Media
 1. Add Storyteq node
-2. Select **Create Media** operation
-3. Enter Template ID
-4. Enter Template Parameters as JSON (e.g., `{"text": "Hello"}`)
+2. Select **List Assets** operation
+3. Choose a **Domain ID** (dynamically loaded from your account)
+4. Configure:
+   - Phase: Active
+   - Listing Style: Page
+   - Listing Limit: 20
 5. Select your Storyteq API credential
 6. Execute the node
-7. Should return media creation response with status
+7. Should return paginated asset results
+
+### Test Get Asset
+
+1. Add Storyteq node
+2. Select **Get Asset** operation
+3. Enter an **Asset ID** (from List Assets or your known asset)
+4. Select your Storyteq API credential
+5. Execute the node
+6. Should return asset details
+
+### Test Get Asset Info
+
+1. Add Storyteq node
+2. Select **Get Asset Info** operation
+3. Enter an **Asset ID**
+4. Select your Storyteq API credential
+5. Execute the node
+6. Should return extended asset metadata
+
+### Test Download Asset
+
+1. Add Storyteq node
+2. Select **Download Asset** operation
+3. Enter an **Asset ID**
+4. Select **Download Type**: Link
+5. Select your Storyteq API credential
+6. Execute the node
+7. Should return a signed download URL
+
+### Test Download Asset Preview
+
+1. Add Storyteq node
+2. Select **Download Asset Preview** operation
+3. Enter an **Asset ID**
+4. Choose a **Recipe**: Icon 512 (or other size)
+5. Select your Storyteq API credential
+6. Execute the node
+7. Should return binary data (thumbnail image)
+
+### Test Set Asset Fields
+
+1. Add Storyteq node
+2. Select **Set Asset Fields** operation
+3. Enter an **Asset ID**
+4. Provide **Fields (JSON)**:
+   ```json
+   {
+     "fieldId1": "value1",
+     "fieldId2": "value2"
+   }
+   ```
+5. Select your Storyteq API credential
+6. Execute the node
+7. Should return success response
+
+### Test Set Asset Narrative
+
+1. Add Storyteq node
+2. Select **Set Asset Narrative** operation
+3. Enter an **Asset ID**
+4. Choose **Narrative Name**: Description
+5. Enter **Value**: "Test description"
+6. Select your Storyteq API credential
+7. Execute the node
+8. Should return success response
+
+### Test Edit Asset Keywords
+
+1. Add Storyteq node
+2. Select **Edit Asset Keywords** operation
+3. Enter **Asset IDs**: "123,456" (comma-separated)
+4. Enter **Keyword IDs**: "789,101" (comma-separated)
+5. Choose **Operation**: Add (or Remove)
+6. Select your Storyteq API credential
+7. Execute the node
+8. Should return success response
 
 ## Troubleshooting
 
@@ -121,7 +197,19 @@ pnpm add /path/to/n8n-nodes-storyteq
 
 ### Runtime Errors
 - Check n8n console for error messages
-- Verify Bearer token is correct
-- Verify region matches your Storyteq instance
+- Verify credentials are correct
+- Check CMP Tenant URL matches your account
+- Verify asset/domain IDs exist
 - Check API endpoint URLs in GenericFunctions.ts
 
+### Authentication Errors
+- Verify credentials are correct
+- Check that token is being obtained (see DEBUG.md)
+- Ensure account has API access enabled
+- Try re-authenticating
+
+### Operation-Specific Errors
+- Verify required parameters are provided
+- Check that asset/domain IDs exist
+- Ensure your account has permissions for the operation
+- Review API documentation for endpoint requirements

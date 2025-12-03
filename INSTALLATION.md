@@ -4,15 +4,30 @@ This guide covers different ways to install the Storyteq node in your n8n instan
 
 ## Prerequisites
 
-- Node.js (v22 or higher recommended)
+- Node.js (v20 or higher recommended)
 - pnpm (or npm/yarn)
 - n8n instance (local or remote)
 
 ## Installation Methods
 
-### Method 1: Development Mode (Best for Development)
+### Method 1: Install from npm (Recommended for Production)
 
-This is the recommended approach when developing or testing the node locally.
+This is the recommended approach for production installations:
+
+```bash
+# In your n8n installation directory
+npm install n8n-nodes-storyteq
+# or
+pnpm add n8n-nodes-storyteq
+
+# Restart n8n
+```
+
+The node will be available after restarting n8n.
+
+### Method 2: Development Mode (Best for Development)
+
+This is the recommended approach when developing or testing the node locally:
 
 ```bash
 # Clone or navigate to the project directory
@@ -29,7 +44,7 @@ pnpm dev
 - Builds the node automatically
 - Starts n8n on `http://localhost:5678`
 - Watches for file changes and rebuilds automatically
-- Links the node to n8n's custom nodes directory (`~/.n8n-node-cli/.n8n/custom`)
+- Links the node to n8n's custom nodes directory
 
 **Advantages:**
 - Hot reload - changes appear immediately
@@ -37,7 +52,7 @@ pnpm dev
 - Isolated environment for testing
 - Perfect for development
 
-### Method 2: Install in Existing n8n Instance
+### Method 3: Install in Existing n8n Instance
 
 If you already have n8n running and want to add this node:
 
@@ -52,7 +67,23 @@ This creates the `dist/` folder with compiled files.
 
 #### Step 2: Install in n8n
 
-**Option A: Install from Local Path**
+**Option A: Copy to Custom Nodes Directory (Standard Method)**
+
+```bash
+# Build the node
+cd n8n-nodes-storyteq
+pnpm build
+
+# Copy to standard community node location
+mkdir -p ~/.n8n/custom
+cp -r dist ~/.n8n/custom/n8n-nodes-storyteq
+
+# Restart n8n
+```
+
+**Note:** n8n automatically loads community nodes from `~/.n8n/custom/` - this is the standard installation location.
+
+**Option B: Install from Local Path**
 
 ```bash
 # Navigate to your n8n installation directory
@@ -62,32 +93,22 @@ cd /path/to/your/n8n-installation
 npm install /absolute/path/to/n8n-nodes-storyteq
 # or with pnpm
 pnpm add /absolute/path/to/n8n-nodes-storyteq
+
+# Restart n8n
 ```
 
-**Option B: Use pnpm/npm link (Symlink)**
-
-```bash
-# In the node package directory
-cd n8n-nodes-storyteq
-pnpm link
-
-# In your n8n installation directory
-cd /path/to/your/n8n-installation
-pnpm link n8n-nodes-storyteq
-```
-
-**Option C: Copy to Custom Nodes Directory**
+**Option C: Use Symlink**
 
 ```bash
 # Build the node
 cd n8n-nodes-storyteq
 pnpm build
 
-# Copy to n8n custom nodes directory
-# Default location: ~/.n8n/custom
-cp -r dist ~/.n8n/custom/n8n-nodes-storyteq
+# Create symlink
+mkdir -p ~/.n8n/custom
+ln -sfn $(pwd)/dist ~/.n8n/custom/n8n-nodes-storyteq
 
-# Or if using Docker, copy to the custom nodes volume
+# Restart n8n
 ```
 
 #### Step 3: Restart n8n
@@ -105,7 +126,7 @@ docker restart n8n-container-name
 sudo systemctl restart n8n
 ```
 
-### Method 3: Use External n8n (Development)
+### Method 4: Use External n8n (Development)
 
 If you have n8n running separately and want to develop against it:
 
@@ -116,22 +137,9 @@ pnpm dev --external-n8n
 
 This will:
 - Build your node
-- Link it to n8n's custom nodes directory
+- Link it to n8n's custom nodes directory (`~/.n8n/custom/`)
 - Watch for changes and rebuild
 - **NOT** start n8n (assumes it's already running)
-
-### Method 4: Install from npm (After Publishing)
-
-Once published to npm:
-
-```bash
-# In your n8n installation directory
-npm install n8n-nodes-storyteq
-# or
-pnpm add n8n-nodes-storyteq
-
-# Restart n8n
-```
 
 ## Verifying Installation
 
@@ -141,7 +149,7 @@ After installation, verify the node is available:
 2. Create a new workflow
 3. Click **Add Node**
 4. Search for **"Storyteq"**
-5. You should see the node in the results
+5. You should see the Storyteq node in the results
 
 ## Setting Up Credentials
 
@@ -149,10 +157,35 @@ After installation, verify the node is available:
 2. Click **Add Credential**
 3. Search for **"Storyteq API"**
 4. Fill in:
-   - **Bearer Token**: Your Storyteq API Bearer token
-   - **Region**: Select your region (europe-west1 or us-east4)
-5. Click **Save**
-6. The credential is now available for use in workflows
+   - **CMP Tenant URL**: Your Storyteq tenant URL (e.g., `https://your-tenant.storyteq.com`)
+   - **Client ID**: Your OAuth 2.0 client ID
+   - **Username**: Your Storyteq username
+   - **Password**: Your Storyteq password
+   - **Grant Type**: Choose "Password" or "Refresh Token"
+   - **Refresh Token**: (Optional) Leave empty unless setting manually
+5. Click **Save** - credentials are automatically tested on save
+
+**Note**: Tokens are automatically managed by the node. You don't need to manually obtain or refresh tokens.
+
+## Docker Installation
+
+If running n8n via Docker:
+
+```bash
+# Build the node
+cd n8n-nodes-storyteq
+pnpm build
+
+# Copy to Docker volume or mount point
+docker cp dist/. n8n-container:/home/node/.n8n/custom/n8n-nodes-storyteq/
+
+# Or use a volume mount in docker-compose.yml:
+volumes:
+  - ./n8n-nodes-storyteq/dist:/home/node/.n8n/custom/n8n-nodes-storyteq
+
+# Restart container
+docker restart n8n-container
+```
 
 ## Troubleshooting
 
@@ -219,26 +252,6 @@ After installation, verify the node is available:
    pnpm install
    ```
 
-## Docker Installation
-
-If running n8n via Docker:
-
-```bash
-# Build the node
-cd n8n-nodes-storyteq
-pnpm build
-
-# Copy to Docker volume or mount point
-docker cp dist/. n8n-container:/home/node/.n8n/custom/n8n-nodes-storyteq/
-
-# Or use a volume mount in docker-compose.yml:
-volumes:
-  - ./n8n-nodes-storyteq/dist:/home/node/.n8n/custom/n8n-nodes-storyteq
-
-# Restart container
-docker restart n8n-container
-```
-
 ## Development Workflow
 
 For active development:
@@ -253,8 +266,7 @@ For active development:
 For production:
 
 1. Build the node: `pnpm build`
-2. Install in production n8n instance
+2. Install in production n8n instance (via npm or copy method)
 3. Restart n8n
 4. Create credentials in production environment
 5. Test workflows
-

@@ -1,114 +1,151 @@
 # n8n-nodes-storyteq
 
-n8n community node for integrating with Storyteq API (Creative Automation).
+n8n community node for integrating with Storyteq Creative Automation Platform (CMP) API v2.
 
-[Repository](https://github.com/MikaelX/n8n-nodes-storyteq)
+[![npm version](https://img.shields.io/npm/v/n8n-nodes-storyteq.svg)](https://www.npmjs.com/package/n8n-nodes-storyteq)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[Repository](https://github.com/MikaelX/n8n-nodes-storyteq) | [npm Package](https://www.npmjs.com/package/n8n-nodes-storyteq)
+
+## Overview
+
+This node provides seamless integration between n8n workflows and Storyteq's Content Management Platform (CMP) API v2. It enables automated creative asset workflows, including asset management, metadata operations, and content distribution.
+
+## Features
+
+- **OAuth 2.0 Authentication**: Automatic token acquisition and refresh with support for password and refresh token grant types
+- **14 CMP v2 Operations**: Comprehensive coverage of asset management operations
+- **Lazy Loading**: Dynamic domain selection for improved user experience
+- **Credential Validation**: Automatic credential testing on save
+- **TypeScript**: Fully typed for better development experience
 
 ## Installation
 
-### Option 1: Development Mode (Recommended for Local Development)
-
-The easiest way to test and develop locally is using the built-in development server:
+### Install from npm (Recommended)
 
 ```bash
+npm install n8n-nodes-storyteq
+# or
+pnpm add n8n-nodes-storyteq
+```
+
+Then restart your n8n instance.
+
+### Development Mode
+
+For local development and testing:
+
+```bash
+git clone https://github.com/MikaelX/n8n-nodes-storyteq.git
+cd n8n-nodes-storyteq
 pnpm install
 pnpm dev
 ```
 
 This will:
-- Build your node automatically
+- Build the node automatically
 - Start n8n with your node loaded
 - Watch for changes and rebuild automatically
 - Open n8n in your browser at `http://localhost:5678`
 
-The node will be available immediately and updates automatically when you make changes.
+See [INSTALLATION.md](INSTALLATION.md) for more installation options.
 
-### Option 2: Install in Existing n8n Instance
-
-This package works as a **standalone community package**, completely isolated from any n8n installation. It follows standard community node patterns.
-
-#### Method A: Development Mode with External n8n
-
-If you have n8n running separately:
-
-```bash
-# Build and link to your running n8n instance
-pnpm build
-pnpm dev --external-n8n
-```
-
-This links the node to `~/.n8n/custom/` (standard community node location) and watches for changes.
-
-#### Method B: Install from Local Path
-
-```bash
-# Build the node first
-pnpm build
-
-# Install from local path (works with any n8n installation)
-npm install /path/to/n8n-nodes-storyteq
-# or
-pnpm add /path/to/n8n-nodes-storyteq
-
-# Restart n8n
-```
-
-#### Method C: Copy to Custom Nodes Directory (Standard Method)
-
-```bash
-# Build the node
-pnpm build
-
-# Copy to standard community node location
-mkdir -p ~/.n8n/custom
-cp -r dist ~/.n8n/custom/n8n-nodes-storyteq
-
-# Restart n8n
-```
-
-**Note:** n8n automatically loads community nodes from `~/.n8n/custom/` - this is the standard installation location.
-
-#### Method D: Install from npm (after publishing)
-
-```bash
-npm install n8n-nodes-storyteq
-# Restart n8n
-```
-
-**Important:** This package is completely isolated and works with any n8n installation (monorepo, standalone, Docker, etc.) without requiring modifications to the n8n codebase.
-
-### Option 3: Use External n8n Instance
-
-If you have n8n running separately and want to develop against it:
-
-```bash
-pnpm dev --external-n8n
-```
-
-This will build and link your node without starting n8n (assumes n8n is already running).
-
-## Usage
-
-After installation, the Storyteq node will be available in your n8n instance. You can use it to interact with the Storyteq API for creative automation and media creation operations.
-
-### Setting Up Credentials
+## Setting Up Credentials
 
 1. Go to **Credentials** in n8n
 2. Click **Add Credential**
 3. Search for **"Storyteq API"**
-4. Enter your:
-   - **Bearer Token**: Your Storyteq API Bearer token
-   - **Region**: Select your region (europe-west1 or us-east4)
-5. Save the credential
-6. Use it when configuring the Storyteq node
+4. Enter your credentials:
+   - **CMP Tenant URL**: Your Storyteq tenant URL (e.g., `https://your-tenant.storyteq.com`)
+   - **Client ID**: Your OAuth 2.0 client ID
+   - **Username**: Your Storyteq username
+   - **Password**: Your Storyteq password
+   - **Grant Type**: Choose "Password" or "Refresh Token"
+   - **Refresh Token**: (Optional) Auto-populated when tokens are obtained
+5. Click **Save** - credentials are automatically tested on save
+
+**Note**: Tokens are automatically managed. The node handles token acquisition and refresh transparently.
+
+## Available Operations
+
+### Asset Management
+
+- **Get Asset** - Retrieve asset details by ID
+- **Get Asset Info** - Get extended asset metadata
+- **List Assets** - List assets with filters, pagination, and sorting
+- **Download Asset** - Get signed download URL for asset
+- **Download Asset Preview** - Download asset thumbnail (Icon 512, 256, 128, or 64)
+- **Get Asset Derivative Menu** - List available derivatives/transforms for an asset
+
+### Asset Metadata
+
+- **Get Asset Fields** - Retrieve custom field values for an asset
+- **Set Asset Fields** - Update custom field values (JSON format)
+- **Get Asset Taxonomy** - Get taxonomy information for an asset
+- **List Asset Narratives** - List Description and Usage narratives
+- **Set Asset Narrative** - Set Description or Usage narrative text
+- **Edit Asset Keywords** - Add or remove keywords from assets
+- **List Asset Availability** - List availability windows for an asset
+
+### Domain Management
+
+- **List User Domains** - List available domains for the authenticated user
+
+## Usage Examples
+
+### Example 1: List Assets in a Domain
+
+1. Add a **Storyteq** node to your workflow
+2. Select **List Assets** operation
+3. Choose a **Domain ID** (dynamically loaded from your account)
+4. Configure filters:
+   - Phase: Active
+   - Listing Style: Page
+   - Listing Limit: 100
+   - Search: (optional) text search on asset name
+   - Available: true (only available assets)
+5. Execute to get paginated results
+
+### Example 2: Download Asset
+
+1. Add a **Storyteq** node
+2. Select **Download Asset** operation
+3. Enter the **Asset ID**
+4. Select **Download Type**: Link
+5. Execute to get a signed download URL
+
+### Example 3: Update Asset Metadata
+
+1. Add a **Storyteq** node
+2. Select **Set Asset Fields** operation
+3. Enter the **Asset ID**
+4. Provide **Fields (JSON)**:
+   ```json
+   {
+     "fieldId1": "value1",
+     "fieldId2": "value2"
+   }
+   ```
+5. Execute to update the asset
+
+### Example 4: Set Asset Narrative
+
+1. Add a **Storyteq** node
+2. Select **Set Asset Narrative** operation
+3. Enter the **Asset ID**
+4. Choose **Narrative Name**: Description or Usage
+5. Enter the **Value** text
+6. Execute to update the narrative
+
+## API Documentation
+
+For detailed API documentation, refer to the [Storyteq CMP API v2 documentation](https://developer.storyteq.com/?urls.primaryName=Content+Management+Platform+API+V2).
 
 ## Development
 
-This project uses `@n8n/node-cli` for development, following the modern n8n node development approach.
-
 ### Prerequisites
 
-- Node.js (v22 or higher)
+- Node.js (v20 or higher)
 - pnpm (or npm/yarn)
 
 ### Setup
@@ -117,83 +154,82 @@ This project uses `@n8n/node-cli` for development, following the modern n8n node
 pnpm install
 ```
 
-### Development Mode (with hot reload)
+### Development Commands
 
 ```bash
+# Development mode with hot reload
 pnpm dev
-```
 
-Starts n8n with your node loaded and automatically rebuilds on changes. Opens n8n in your browser (usually http://localhost:5678).
-
-### Build
-
-```bash
+# Build for production
 pnpm build
-```
 
-Compiles TypeScript to JavaScript for production.
-
-### Build (Watch Mode)
-
-```bash
+# Build in watch mode
 pnpm build:watch
-```
 
-Builds in watch mode (auto-rebuilds on changes).
-
-### Lint
-
-```bash
+# Lint code
 pnpm lint
 pnpm lint:fix
-```
 
-Check code for errors and auto-fix issues when possible.
-
-### Type Check
-
-```bash
+# Type check
 pnpm typecheck
 ```
 
-Type check without building.
-
-### Release
-
-```bash
-pnpm release
-```
-
-Create a new release.
-
-## Project Structure
+### Project Structure
 
 ```
 n8n-nodes-storyteq/
 ├── src/
+│   ├── credentials/
+│   │   └── Storyteq.credentials.ts    # Credential definition
 │   └── nodes/
 │       └── Storyteq/
-│           ├── Storyteq.node.ts      # Main node implementation
-│           └── Storyteq.node.json    # Node metadata
-├── dist/                                   # Compiled output
+│           ├── Storyteq.node.ts         # Main node implementation
+│           ├── GenericFunctions.ts     # Shared API functions
+│           ├── actions/                # Operation implementations
+│           └── storyteq.svg            # Node icon
+├── dist/                                # Compiled output
 ├── package.json
 └── tsconfig.json
 ```
 
-## Resources
+## Troubleshooting
 
-- **Templates** - List and get templates
-- **Media** - Create, list, and get media
+### Credential Issues
 
-## API Documentation
+- Ensure your CMP Tenant URL is the full URL (e.g., `https://your-tenant.storyteq.com`)
+- Verify your Client ID, Username, and Password are correct
+- Check that your account has API access enabled
+- See [DEBUG.md](DEBUG.md) for debugging credential issues
 
-For detailed API documentation, refer to the [Storyteq API documentation](https://api.storyteq.com) and the OpenAPI spec included in this repository (`storyteq-api_v4_openapi.yaml`).
+### Node Not Appearing
 
-## Repository
+- Ensure the package is installed: `npm list n8n-nodes-storyteq`
+- Check that n8n was restarted after installation
+- Verify the build completed: `pnpm build`
+- Check n8n logs for errors
 
-- GitHub: [https://github.com/MikaelX/n8n-nodes-storyteq](https://github.com/MikaelX/n8n-nodes-storyteq)
+### API Errors
+
+- Verify your credentials are correct
+- Check that the asset/domain IDs exist
+- Ensure your account has permissions for the requested operations
+- Review the API documentation for endpoint requirements
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
 MIT License - see [LICENSE.md](LICENSE.md) for details.
 
+## Support
+
+- **Issues**: [GitHub Issues](https://github.com/MikaelX/n8n-nodes-storyteq/issues)
+- **Documentation**: [Storyteq API Documentation](https://developer.storyteq.com/?urls.primaryName=Content+Management+Platform+API+V2)

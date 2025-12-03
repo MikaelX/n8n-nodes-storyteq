@@ -9,6 +9,7 @@ This is the standard way to develop and test community nodes - it's completely i
 ```bash
 # From the node package directory
 cd /path/to/n8n-nodes-storyteq
+pnpm install
 pnpm dev
 ```
 
@@ -111,7 +112,6 @@ pnpm dev
 cd /path/to/n8n-nodes-storyteq
 pnpm dev --external-n8n
 ```
-```
 
 This gives you:
 - ✅ Isolated node development
@@ -119,4 +119,3 @@ This gives you:
 - ✅ Hot reload
 - ✅ No monorepo modifications
 - ✅ Standard community package workflow
-
