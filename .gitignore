@@ -13,3 +13,9 @@ storyteq-api_v4_openapi.yaml
 # Cursor IDE internal files
 .cursor/
 
+
+# Workflow files (may contain secrets)
+*.json
+*workflow*.json
+*handler*.json
+*ECH*
