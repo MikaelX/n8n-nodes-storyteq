@@ -6,6 +6,7 @@ import * as getCmpAssetTaxonomy from './getCmpAssetTaxonomy.operation';
 import * as listCmpAssetNarratives from './listCmpAssetNarratives.operation';
 import * as downloadCmpAsset from './downloadCmpAsset.operation';
 import * as downloadCmpAssetPreview from './downloadCmpAssetPreview.operation';
+import * as downloadAsset from './downloadAsset.operation';
 import * as getCmpAssetDerivativeMenu from './getCmpAssetDerivativeMenu.operation';
 import * as listCmpAssets from './listCmpAssets.operation';
 import * as listCmpAssetAvailability from './listCmpAssetAvailability.operation';
@@ -48,6 +49,10 @@ export const operations: Record<
 	downloadCmpAssetPreview: {
 		description: downloadCmpAssetPreview.description,
 		execute: downloadCmpAssetPreview.execute,
+	},
+	downloadAsset: {
+		description: downloadAsset.description,
+		execute: downloadAsset.execute,
 	},
 	getCmpAssetDerivativeMenu: {
 		description: getCmpAssetDerivativeMenu.description,

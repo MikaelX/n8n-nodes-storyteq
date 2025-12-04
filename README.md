@@ -73,7 +73,7 @@ See [INSTALLATION.md](INSTALLATION.md) for more installation options.
 - **Get Asset** - Retrieve asset details by ID
 - **Get Asset Info** - Get extended asset metadata
 - **List Assets** - List assets with filters, pagination, and sorting
-- **Download Asset URL** - Get signed download URL for asset
+- **Get Asset URL** - Get signed download URL for asset
 - **Download Asset Preview** - Download asset thumbnail (Icon 512, 256, 128, or 64)
 - **Get Asset Derivative Menu** - List available derivatives/transforms for an asset
 
@@ -106,10 +106,10 @@ See [INSTALLATION.md](INSTALLATION.md) for more installation options.
    - Available: true (only available assets)
 5. Execute to get paginated results
 
-### Example 2: Download Asset URL
+### Example 2: Get Asset URL
 
 1. Add a **Storyteq** node
-2. Select **Download Asset URL** operation
+2. Select **Get Asset URL** operation
 3. Enter the **Asset ID**
 4. Select **Download Type**: Link
 5. Execute to get a signed download URL
