@@ -1,4 +1,6 @@
-import type { IExecuteFunctions, INodeProperties, INodeExecutionData, IHttpRequestOptions } from 'n8n-workflow';
+import type { IExecuteFunctions, INodeProperties, INodeExecutionData } from 'n8n-workflow';
+import { Readable } from 'stream';
+import type { ReadableStream as NodeReadableStream } from 'stream/web';
 import { apiRequest } from '../GenericFunctions';
 
 export const description: INodeProperties[] = [
@@ -42,15 +44,20 @@ export async function execute(
 
 	const fileName = (responseData as { name?: string })?.name || `asset-${assetId}`;
 
-	// Fetch the actual binary data from the signed URL
+	// Stream the download directly without loading into memory
 	// Signed URLs don't require authentication headers as they're already authenticated via signature
-	const downloadOptions: IHttpRequestOptions = {
-		method: 'GET',
-		url: downloadUrl,
-		encoding: 'arraybuffer',
-	};
+	const response = await fetch(downloadUrl);
+	
+	if (!response.ok) {
+		throw new Error(`Failed to download asset: ${response.status} ${response.statusText}`);
+	}
 
-	const binaryData = await this.helpers.httpRequest(downloadOptions);
+	if (!response.body) {
+		throw new Error('Response body is null');
+	}
+
+	// Convert Web ReadableStream to Node.js Readable stream
+	const stream = Readable.fromWeb(response.body as unknown as NodeReadableStream);
 
 	return {
 		json: {
@@ -59,10 +66,7 @@ export async function execute(
 			name: fileName,
 		},
 		binary: {
-			data: await this.helpers.prepareBinaryData(
-				Buffer.from(binaryData as ArrayBuffer),
-				fileName,
-			),
+			data: await this.helpers.prepareBinaryData(stream, fileName),
 		},
 		pairedItem: {
 			item: itemIndex,

@@ -1,4 +1,6 @@
-import type { IExecuteFunctions, INodeProperties, INodeExecutionData, IHttpRequestOptions } from 'n8n-workflow';
+import type { IExecuteFunctions, INodeProperties, INodeExecutionData } from 'n8n-workflow';
+import { Readable } from 'stream';
+import type { ReadableStream as NodeReadableStream } from 'stream/web';
 import { getCredentials, getBaseUrl, ensureValidToken } from '../GenericFunctions';
 
 export const description: INodeProperties[] = [
@@ -50,21 +52,30 @@ export async function execute(
 	// Get token
 	const token = await ensureValidToken.call(this, credentials);
 
-	const options: IHttpRequestOptions = {
+	// Build URL with query parameters
+	const url = new URL(`${baseUrl}/DownloadAssetPreview`);
+	url.searchParams.append('assetID', String(assetID));
+	url.searchParams.append('recipe', recipe);
+
+	// Stream the download directly without loading into memory
+	const response = await fetch(url.toString(), {
 		method: 'GET',
-		url: `${baseUrl}/DownloadAssetPreview`,
 		headers: {
 			'CMP-Tenant': credentials.cmpTenant!,
 			Authorization: `Bearer ${token}`,
 		},
-		qs: {
-			assetID,
-			recipe,
-		},
-		encoding: 'arraybuffer',
-	};
+	});
 
-	const response = await this.helpers.httpRequest(options);
+	if (!response.ok) {
+		throw new Error(`Failed to download asset preview: ${response.status} ${response.statusText}`);
+	}
+
+	if (!response.body) {
+		throw new Error('Response body is null');
+	}
+
+	// Convert Web ReadableStream to Node.js Readable stream
+	const stream = Readable.fromWeb(response.body as unknown as NodeReadableStream);
 
 	return {
 		json: {
@@ -72,7 +83,7 @@ export async function execute(
 			recipe,
 		},
 		binary: {
-			data: await this.helpers.prepareBinaryData(Buffer.from(response as ArrayBuffer), `asset-${assetID}-${recipe}.png`),
+			data: await this.helpers.prepareBinaryData(stream, `asset-${assetID}-${recipe}.png`),
 		},
 		pairedItem: {
 			item: itemIndex,
