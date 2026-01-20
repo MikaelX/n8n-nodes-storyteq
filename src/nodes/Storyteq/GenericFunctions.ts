@@ -113,7 +113,7 @@ export async function ensureValidToken(
 		try {
 			tokenResponse = await getTokenFromRefreshToken.call(this, credentials);
 			console.log('[Storyteq] Token obtained using refresh token');
-		} catch (error) {
+		} catch {
 			// Refresh token failed, fall back to password
 			console.log('[Storyteq] Refresh token failed, falling back to password grant');
 			tokenResponse = await getTokenFromPassword.call(this, credentials);
