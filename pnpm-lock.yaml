@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   form-data:
-    specifier: 4.0.5
-    version: 4.0.5
+    specifier: 4.0.4
+    version: 4.0.4
   n8n-workflow:
     specifier: ^1.120.6
     version: 1.120.6
@@ -1397,8 +1397,8 @@ packages:
       mime-types: 2.1.35
     dev: false
 
-  /form-data@4.0.5:
-    resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
+  /form-data@4.0.4:
+    resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
     engines: {node: '>= 6'}
     dependencies:
       asynckit: 0.4.0
